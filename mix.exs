@@ -28,6 +28,8 @@ defmodule BuzzardServer.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [
+        {:cowboy, git: "https://github.com/ninenines/cowboy.git", tag: "1.0.4"}
+    ]
   end
 end
