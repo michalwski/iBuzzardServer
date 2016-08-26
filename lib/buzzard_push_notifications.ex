@@ -14,8 +14,6 @@ defmodule BuzzardPushNotifications do
             {:atomic, :ok} -> :ok
             {:aborted, {:already_exists, _}} -> :ok
         end
-
-        # store_token("device1", "2af328b8d5e70039e858a99a2495210d98fb48563211d8b14a576cda6af9cd19")
     end
 
     def store_token(device, token) do
@@ -29,6 +27,7 @@ defmodule BuzzardPushNotifications do
                 message = message
                     |> Map.put(:token, pn_entity_token(pn_entity))
                     |> Map.put(:alert, "INTRUDER ALERT!")
+                    |> Map.put(:sound, "buzzard.wav")
                     |> Map.put(:badge, 1)
                 APNS.push :app1_dev_pool, message
             end, :mnesia.dirty_all_keys(:pn_entity))
