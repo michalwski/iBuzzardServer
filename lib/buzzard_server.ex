@@ -32,7 +32,8 @@ defmodule BuzzardServer do
             {:_, [{"/intrusion_event", :intrusion_event_handler, []}]}
         ])
     device_token_dispatch = :cowboy_router.compile([
-            {:_, [{"/device_token", :device_token_handler, []}]}
+            {:_, [{"/device_token", :device_token_handler, []},
+                  {"/motion_vod", :motion_vod_handler, []}]}
         ])
 
     ssl_opts = [{:certfile, "server.crt"}, {:keyfile, "server.key"}]
