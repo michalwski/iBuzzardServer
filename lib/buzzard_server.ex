@@ -31,10 +31,12 @@ defmodule BuzzardServer do
             {:_, [{"/device_token", :device_token_handler, []}]}
         ])
 
-    :cowboy.start_http(:intrusion_event_listener, 10, [{:port, 7000}],
-                       [{:env, [{:dispatch, intrusion_dispatch}]}])
-    :cowboy.start_http(:device_token_listener, 10, [{:port, 9000}],
-                       [{:env, [{:dispatch, device_token_dispatch}]}])
+    ssl_opts = [{:certfile, "server.crt"}, {:keyfile, "server.key"}]
+
+    {:ok, _} = :cowboy.start_https(:intrusion_event_listener, 10, [{:port, 7000} | ssl_opts],
+                              [{:env, [{:dispatch, intrusion_dispatch}]}])
+    {:ok, _} = :cowboy.start_https(:device_token_listener, 10, [{:port, 9000} | ssl_opts],
+                              [{:env, [{:dispatch, device_token_dispatch}]}])
 
   end
 

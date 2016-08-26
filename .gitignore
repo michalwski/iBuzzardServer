@@ -6,3 +6,6 @@ erl_crash.dump
 mix.lock
 .*.swp
 Mnesia.*
+*.pem
+*.key
+*.crt
