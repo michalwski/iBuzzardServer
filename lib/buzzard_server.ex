@@ -10,7 +10,7 @@ defmodule BuzzardServer do
     BuzzardPushNotifications.init()
 
     children = [
-      worker(IBuzzard.VideoSaver, [])
+      worker(IBuzzard.VideoSaver, []),
       worker(Receiver, []),
       worker(Acceptor, []),
       worker(Streamer, [])

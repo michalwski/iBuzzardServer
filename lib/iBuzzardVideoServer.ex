@@ -1,5 +1,6 @@
 defmodule IBuzzard.VideoSaver do
   use GenServer
+  use Timex
 
   require Logger
 
@@ -9,6 +10,10 @@ defmodule IBuzzard.VideoSaver do
 
   def motion_detected() do
     GenServer.cast(__MODULE__, :motion_detected)
+  end
+
+  def read_em_all() do
+    :ets.tab2list(:motion)
   end
 
   def init([]) do
@@ -24,18 +29,21 @@ defmodule IBuzzard.VideoSaver do
     #TODO ask for frames
     Logger.info "start saving"
     timer_ref = set_timer()
-    {:noreply, timer_ref}
+    motion_rec = {:motion, Timex.now, :undefined}
+    :mnesia.dirty_write(motion_rec)
+    {:noreply, {timer_ref, motion_rec}}
   end
 
-  def handle_cast(:motion_detected, TimerRef) do
-    newtimerref = reset_timer(TimerRef)
+  def handle_cast(:motion_detected, {timer_ref, motion_rec}) do
+    newtimerref = reset_timer(timer_ref)
     Logger.info "continue saving"
-    {:noreply, newtimerref}
+    {:noreply, {newtimerref, motion_rec}}
   end
 
-  def handle_info(:motion_stopped, _) do
+  def handle_info(:motion_stopped, {_, {:motion, start, _}}) do
     ##
     Logger.info "stop saving"
+    :mnesia.dirty_write({:motion, start, Timex.now})
     {:noreply, :undefined}
   end
 
