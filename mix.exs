@@ -11,7 +11,7 @@ defmodule BuzzardServer.Mixfile do
   end
 
   def application do
-    [applications: [:logger, :apns, :tzdata],
+    [applications: [:logger, :apns],
      mod: {BuzzardServer, []}]
   end
 
@@ -19,8 +19,7 @@ defmodule BuzzardServer.Mixfile do
     [
         {:cowboy, git: "https://github.com/ninenines/cowboy.git", tag: "1.0.4"},
         {:apns, "~> 0.9.4"},
-        {:jiffy, "~> 0.14.7"},
-        {:timex, "~> 3.0"}
+        {:jiffy, "~> 0.14.7"}
     ]
   end
 end
