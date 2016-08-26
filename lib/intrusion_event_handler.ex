@@ -6,6 +6,7 @@ defmodule :intrusion_event_handler do
     end
 
     def handle(req, state) do
+        BuzzardPushNotifications.send_notification()
         {ok, req1} = :cowboy_req.reply(200, [], '{"status": "ok"}', req)
         {:ok, req1, state}
     end

@@ -28,3 +28,26 @@ use Mix.Config
 # here (which is why it is important to import them last).
 #
 #     import_config "#{Mix.env}.exs"
+config :apns,
+  # Here goes "global" config applied as default to all pools started if not overwritten by pool-specific value
+  callback_module:    APNS.Callback,
+  timeout:            30,
+  feedback_interval:  1200,
+  support_old_ios:    true,
+  expiry:    60,
+  # Here are pools configs. Any value from "global" config can be overwritten in any single pool config
+  pools: [
+    app1_dev_pool: [
+      env: :dev,
+      pool_size: 10,
+      pool_max_overflow: 0,
+      certfile: "iBuzzard.pem"
+    ]
+
+#    app1_prod_pool: [
+#      env: :prod,
+#      certfile: "/path/to/app1_prod.pem",
+#      pool_size: 100,
+#      pool_max_overflow: 0
+#    ],
+  ]
