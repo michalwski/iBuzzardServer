@@ -12,20 +12,25 @@ defmodule IBuzzard.VideoSaver do
   end
 
   def init([]) do
+    case :mnesia.create_table(:motion, [{:disc_copies, [node]},
+                                        {:attributes, [:start, :end]}]) do
+      {:atomic, :ok} -> :ok
+      {:aborted, {:already_exists, _}} -> :ok
+    end
     {:ok, :undefined}
   end
 
-  def handle_cast(:motion_detected, undefined) do
+  def handle_cast(:motion_detected, :undefined) do
     #TODO ask for frames
     Logger.info "start saving"
-    TimerRef = set_timer()
-    {:noreply, TimerRef}
+    timer_ref = set_timer()
+    {:noreply, timer_ref}
   end
 
   def handle_cast(:motion_detected, TimerRef) do
-    NewTimerRef = reset_timer(TimerRef)
+    newtimerref = reset_timer(TimerRef)
     Logger.info "continue saving"
-    {:noreply, NewTimerRef}
+    {:noreply, newtimerref}
   end
 
   def handle_info(:motion_stopped, _) do
@@ -38,8 +43,8 @@ defmodule IBuzzard.VideoSaver do
     Process.send_after self(), :motion_stopped, :timer.seconds(10)
   end
 
-  defp reset_timer(TimerRef) do
-    Process.cancel_timer(TimerRef)
+  defp reset_timer(timerref) do
+    Process.cancel_timer(timerref)
     set_timer()
   end
 

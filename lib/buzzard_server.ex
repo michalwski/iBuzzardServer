@@ -9,6 +9,7 @@ defmodule BuzzardServer do
     BuzzardPushNotifications.init()
 
     children = [
+      worker(IBuzzard.VideoSaver, [])
       #worker(BuzzardServer.Worker, [arg1, arg2, arg3]),
     ]
 
