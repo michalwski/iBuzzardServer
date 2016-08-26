@@ -4,8 +4,7 @@ defmodule BuzzardPushNotifications do
         {:pn_entity, device, token, timestamp}
     end
 
-    def pn_entity_token(pn_entity) do
-        {_, _, token, _} = pn_entity
+    def pn_entity_token({_, _, token, _}) do
         token
     end
 
