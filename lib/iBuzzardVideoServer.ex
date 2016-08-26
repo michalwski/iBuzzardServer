@@ -27,6 +27,7 @@ defmodule IBuzzard.VideoSaver do
   def handle_cast(:motion_detected, :undefined) do
     #TODO ask for frames
     Logger.info "start saving"
+    :ok = BuzzardPushNotifications.send_notification()
     timer_ref = set_timer()
     motion_rec = {:motion, DateTime.utc_now, :undefined}
     :mnesia.dirty_write(motion_rec)

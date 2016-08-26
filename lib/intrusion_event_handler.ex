@@ -6,7 +6,6 @@ defmodule :intrusion_event_handler do
     end
 
     def handle(req, state) do
-        :ok = BuzzardPushNotifications.send_notification()
         :ok = IBuzzard.VideoSaver.motion_detected()
         {ok, req1} = :cowboy_req.reply(200, [], '{"status": "ok"}', req)
         {:ok, req1, state}
