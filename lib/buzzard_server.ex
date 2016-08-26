@@ -1,6 +1,7 @@
 defmodule BuzzardServer do
   use Application
 
+  alias BuzzardServer.{Streamer, Receiver, Streamer.Acceptor}
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
@@ -10,7 +11,9 @@ defmodule BuzzardServer do
 
     children = [
       worker(IBuzzard.VideoSaver, [])
-      #worker(BuzzardServer.Worker, [arg1, arg2, arg3]),
+      worker(Receiver, []),
+      worker(Acceptor, []),
+      worker(Streamer, [])
     ]
 
     opts = [strategy: :one_for_one, name: BuzzardServer.Supervisor]
