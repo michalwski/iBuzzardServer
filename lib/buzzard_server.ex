@@ -6,6 +6,7 @@ defmodule BuzzardServer do
     import Supervisor.Spec, warn: false
 
     init_mnesia()
+    init_dirs()
     init_cowboy()
     BuzzardPushNotifications.init()
 
@@ -25,23 +26,33 @@ defmodule BuzzardServer do
     Application.start(:mnesia)
   end
 
+  def init_dirs() do
+    case :file.make_dir("videos") do
+      :ok -> :ok
+      {:error, :eexist} -> :ok
+    end
+  end
+
   def init_cowboy() do
     {:ok, _} = Application.ensure_all_started(:cowboy)
 
-    intrusion_dispatch = :cowboy_router.compile([
+    rpi_dispatch = :cowboy_router.compile([
             {:_, [{"/intrusion_event", :intrusion_event_handler, []}]}
         ])
-    device_token_dispatch = :cowboy_router.compile([
-            {:_, [{"/device_token", :device_token_handler, []},
-                  {"/motion_vod", :motion_vod_handler, []}]}
+    client_dispatch = :cowboy_router.compile([
+            {:_, [
+                  {"/device_token", :device_token_handler, []},
+                  {"/motion_vod", :motion_vod_handler, []},
+                  {"/videos/[...]", :cowboy_static, {:dir, "videos", []}}
+                 ]}
         ])
 
     ssl_opts = [{:certfile, "server.crt"}, {:keyfile, "server.key"}]
 
-    {:ok, _} = :cowboy.start_https(:intrusion_event_listener, 10, [{:port, 7000} | ssl_opts],
-                              [{:env, [{:dispatch, intrusion_dispatch}]}])
-    {:ok, _} = :cowboy.start_https(:device_token_listener, 10, [{:port, 9000} | ssl_opts],
-                              [{:env, [{:dispatch, device_token_dispatch}]}])
+    {:ok, _} = :cowboy.start_https(:rpi_listener, 10, [{:port, 7000} | ssl_opts],
+                              [{:env, [{:dispatch, rpi_dispatch}]}])
+    {:ok, _} = :cowboy.start_https(:client_listener, 10, [{:port, 9000} | ssl_opts],
+                              [{:env, [{:dispatch, client_dispatch}]}])
 
   end
 
