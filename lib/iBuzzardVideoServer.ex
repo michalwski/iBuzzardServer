@@ -11,8 +11,11 @@ defmodule IBuzzard.VideoSaver do
     GenServer.cast(__MODULE__, :motion_detected)
   end
 
-  def read_em_all() do
-    :lists.reverse(:lists.sort(:ets.tab2list(:motion)))
+  def read_all() do
+    recs = :lists.reverse(:lists.sort(:ets.tab2list(:motion)))
+    for {:motion, start, ent} <- recs do
+      {start, ent}
+    end
   end
 
   def init([]) do
